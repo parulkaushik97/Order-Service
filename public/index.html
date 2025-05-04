@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Order Service UI</title>
+  <style>
+    body { font-family: Arial; padding: 20px; }
+    input, button { margin: 5px; }
+    pre { background: #F3F3F3; padding: 10px; }
+  </style>
+</head>
+<body>
+  <h1>Order Service - CRUD Interface</h1>
+  <h3>Create Order</h3>
+  <input type="text" id="create-productId" placeholder="Product ID" />
+  <input type="number" id="create-quantity" placeholder="Quantity" />
+  <input type="text" id="create-customerId" placeholder="Customer ID" />
+  <button onclick="createOrder()">Create</button>
+  <h3>Get All Orders</h3>
+  <button onclick="getOrders()">Fetch Orders</button>
+  <h3>Get Order by ID</h3>
+  <input type="number" id="get-id" placeholder="Order ID" />
+  <button onclick="getOrderById()">Fetch Order</button>
+  <h3>Update Order</h3>
+  <input type="number" id="update-id" placeholder="Order ID" />
+  <input type="number" id="update-quantity" placeholder="New Quantity" />
+  <input type="text" id="update-status" placeholder="New Status" />
+  <button onclick="updateOrder()">Update</button>
+  <h3>Delete Order</h3>
+  <input type="number" id="delete-id" placeholder="Order ID" />
+  <button onclick="deleteOrder()">Delete</button>
+  <h3>Response</h3>
+  <pre id="response"></pre>
+  <script>
+    const API = 'http://localhost:3000/orders';
+    async function getOrders() {
+      const res = await fetch(API);
+      document.getElementById('response').textContent = await res.text();
+    }
+    async function getOrderById() {
+      const id = document.getElementById('get-id').value;
+      const res = await fetch(`${API}/${id}`);
+      document.getElementById('response').textContent = await res.text();
+    }
+    async function createOrder() {
+      const body = {
+        productId: document.getElementById('create-productId').value,
+        quantity: Number(document.getElementById('create-quantity').value),
+        customerId: document.getElementById('create-customerId').value
+      };
+      const res = await fetch(API, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body)
+      });
+      document.getElementById('response').textContent = await res.text();
+    }
+    async function updateOrder() {
+      const id = document.getElementById('update-id').value;
+      const body = {
+        quantity: Number(document.getElementById('update-quantity').value),
+        status: document.getElementById('update-status').value
+      };
+      const res = await fetch(`${API}/${id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body)
+      });
+      document.getElementById('response').textContent = await res.text();
+    }
+    async function deleteOrder() {
+      const id = document.getElementById('delete-id').value;
+      const res = await fetch(`${API}/${id}`, { method: 'DELETE' });
+      document.getElementById('response').textContent = await res.text();
+    }
+  </script>
+</body>
+</html>
